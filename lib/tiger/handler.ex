@@ -32,6 +32,23 @@ defmodule Tiger.Handler do
     %{ conv | status: 200, body: "Bengal tiger #{id}" }
   end
 
+  def route(%{ method: "GET", path: "/about" } = conv) do
+    file =
+      Path.expand("../../pages", __DIR__)
+      |> Path.join("about.html")
+
+    case File.read(file) do
+      {:ok, content} ->
+        %{ conv | status: 200, body: content }
+
+      {:error, :enoent} ->
+        %{ conv | status: 404, body: "File not found" }
+
+      {:error, reason} ->
+        %{ conv | status: 500, body: reason}
+    end
+  end
+
   def route(%{ path: path } = conv) do
     %{ conv | status: 404, body: "No #{path} tigers" }
   end
@@ -97,6 +114,16 @@ IO.puts response
 
 request = """
 GET /wolfs HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+response = Tiger.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /about HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
