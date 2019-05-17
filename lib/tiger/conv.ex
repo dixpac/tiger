@@ -1,6 +1,7 @@
 defmodule Tiger.Conv do
   defstruct method: "",
             path: "",
+            headers: %{},
             params: %{},
             status: nil,
             body: ""
