@@ -4,6 +4,7 @@ defmodule Tiger.Handler do
     |> parse
     |> log
     |> route
+    |> track
     |> format_response
   end
 
@@ -34,9 +35,17 @@ defmodule Tiger.Handler do
   def route(conv, "GET", "/bengals" <> id) do
     %{ conv | status: 200, body: "Bengal tiger #{id}" }
   end
-def route(conv, _method, path) do
+
+  def route(conv, _method, path) do
     %{ conv | status: 404, body: "No #{path} tigers" }
   end
+
+  def track(%{ status: 404, path: path } = conv) do
+    IO.puts "Ooops...#{path} doesn't exist"
+    conv
+  end
+
+  def track(conv), do: conv
 
   def format_response(conv) do
     """
