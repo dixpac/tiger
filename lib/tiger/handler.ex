@@ -6,6 +6,7 @@ defmodule Tiger.Handler do
 
   import Tiger.Plugins, only: [ log: 1, track: 1 ]
   import Tiger.Parser
+  import Tiger.FileHandler
 
   @doc "Transforms request into the response."
   def handle(request) do
@@ -30,20 +31,10 @@ defmodule Tiger.Handler do
   end
 
   def route(%{ method: "GET", path: "/about" } = conv) do
-    file =
-      @pages_path
-      |> Path.join("about.html")
-
-    case File.read(file) do
-      {:ok, content} ->
-        %{ conv | status: 200, body: content }
-
-      {:error, :enoent} ->
-        %{ conv | status: 404, body: "File not found" }
-
-      {:error, reason} ->
-        %{ conv | status: 500, body: reason}
-    end
+    @pages_path
+    |> Path.join("about.html")
+    |> File.read
+    |> handle_file(conv)
   end
 
   def route(%{ path: path } = conv) do
