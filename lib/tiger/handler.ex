@@ -4,6 +4,9 @@ defmodule Tiger.Handler do
 
   @pages_path Path.expand("../../pages", __DIR__)
 
+  import Tiger.Plugins, only: [ log: 1, track: 1 ]
+  import Tiger.Parser
+
   @doc "Transforms request into the response."
   def handle(request) do
     request
@@ -13,18 +16,6 @@ defmodule Tiger.Handler do
     |> track
     |> format_response
   end
-
-  def parse(request) do
-    [method, path, _] =
-      request
-      |> String.split("\n")
-      |> List.first
-      |> String.split(" ")
-
-    %{ method: method, path: path, status: nil, body: "" }
-  end
-
-  def log(conv), do: IO.inspect conv
 
   def route(%{ method: "GET", path: "/siberians" } = conv) do
     %{ conv | status: 200, body: "Siberian tigers..." }
@@ -58,13 +49,6 @@ defmodule Tiger.Handler do
   def route(%{ path: path } = conv) do
     %{ conv | status: 404, body: "No #{path} tigers" }
   end
-
-  def track(%{ status: 404, path: path } = conv) do
-    IO.puts "Ooops...#{path} doesn't exist"
-    conv
-  end
-
-  def track(conv), do: conv
 
   def format_response(conv) do
     """
