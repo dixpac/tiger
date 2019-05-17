@@ -2,6 +2,8 @@ defmodule Tiger.Handler do
 
   @moduledoc "Handles HTTP requests"
 
+  alias Tiger.Conv
+
   @pages_path Path.expand("pages", File.cwd!)
 
   import Tiger.Plugins, only: [ log: 1, track: 1 ]
@@ -18,48 +20,37 @@ defmodule Tiger.Handler do
     |> format_response
   end
 
-  def route(%{ method: "GET", path: "/siberians" } = conv) do
+  def route(%Conv{ method: "GET", path: "/siberians" } = conv) do
     %{ conv | status: 200, body: "Siberian tigers..." }
   end
 
-  def route(%{ method: "GET", path: "/bengals" } = conv) do
+  def route(%Conv{ method: "GET", path: "/bengals" } = conv) do
     %{ conv | status: 200, body: "Bengal tigers..." }
   end
 
-  def route(%{ method: "GET", path: "/bengals/" <> id } = conv) do
+  def route(%Conv{ method: "GET", path: "/bengals/" <> id } = conv) do
     %{ conv | status: 200, body: "Bengal tiger #{id}" }
   end
 
-  def route(%{ method: "GET", path: "/about" } = conv) do
+  def route(%Conv{ method: "GET", path: "/about" } = conv) do
     @pages_path
     |> Path.join("about.html")
     |> File.read
     |> handle_file(conv)
   end
 
-  def route(%{ path: path } = conv) do
+  def route(%Conv{ path: path } = conv) do
     %{ conv | status: 404, body: "No #{path} tigers" }
   end
 
-  def format_response(conv) do
+  def format_response(%Conv{} = conv) do
     """
-    HTTP/1.1 #{conv.status} #{status_reason(conv.status)}
+    HTTP/1.1 #{Conv.full_status(conv)}
     Content-Type: text/html
     Content-Lenght: #{String.length(conv.body)}
 
     #{conv.body}
     """
-  end
-
-  defp status_reason(code) do
-    %{
-      200 => "OK",
-      201 => "Created",
-      401 => "Unauthorized",
-      403 => "Forbidden",
-      404 => "Not Found",
-      500 => "Internal Server Error"
-    }[code]
   end
 end
 

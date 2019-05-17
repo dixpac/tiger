@@ -1,5 +1,8 @@
 defmodule Tiger.Parser do
+
   @moduledoc "Parse HTTP request"
+
+  alias Tiger.Conv
 
   def parse(request) do
     [method, path, _] =
@@ -8,6 +11,6 @@ defmodule Tiger.Parser do
       |> List.first
       |> String.split(" ")
 
-    %{ method: method, path: path, status: nil, body: "" }
+    %Conv{ method: method, path: path, status: nil, body: "" }
   end
 end
