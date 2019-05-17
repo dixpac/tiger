@@ -2,7 +2,7 @@ defmodule Tiger.Handler do
 
   @moduledoc "Handles HTTP requests"
 
-  @pages_path Path.expand("../../pages", __DIR__)
+  @pages_path Path.expand("pages", File.cwd!)
 
   import Tiger.Plugins, only: [ log: 1, track: 1 ]
   import Tiger.Parser
