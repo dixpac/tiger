@@ -1,4 +1,10 @@
 defmodule Tiger.Handler do
+
+  @moduledoc "Handles HTTP requests"
+
+  @pages_path Path.expand("../../pages", __DIR__)
+
+  @doc "Transforms request into the response."
   def handle(request) do
     request
     |> parse
@@ -34,7 +40,7 @@ defmodule Tiger.Handler do
 
   def route(%{ method: "GET", path: "/about" } = conv) do
     file =
-      Path.expand("../../pages", __DIR__)
+      @pages_path
       |> Path.join("about.html")
 
     case File.read(file) do
