@@ -20,23 +20,19 @@ defmodule Tiger.Handler do
 
   def log(conv), do: IO.inspect conv
 
-  def route(conv) do
-    route(conv, conv.method, conv.path)
-  end
-
-  def route(conv, "GET", "/siberians") do
+  def route(%{ method: "GET", path: "/siberians" } = conv) do
     %{ conv | status: 200, body: "Siberian tigers..." }
   end
 
-  def route(conv, "GET", "/bengals") do
+  def route(%{ method: "GET", path: "/bengals" } = conv) do
     %{ conv | status: 200, body: "Bengal tigers..." }
   end
 
-  def route(conv, "GET", "/bengals" <> id) do
+  def route(%{ method: "GET", path: "/bengals/" <> id } = conv) do
     %{ conv | status: 200, body: "Bengal tiger #{id}" }
   end
 
-  def route(conv, _method, path) do
+  def route(%{ path: path } = conv) do
     %{ conv | status: 404, body: "No #{path} tigers" }
   end
 
