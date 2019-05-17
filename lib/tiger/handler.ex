@@ -17,7 +17,22 @@ defmodule Tiger.Handler do
   end
 
   def route(conv) do
-    %{ conv | status: 200, body: "Tiger, tiger!" }
+    route(conv, conv.method, conv.path)
+  end
+
+  def route(conv, "GET", "/siberians") do
+    %{ conv | status: 200, body: "Siberian tigers..." }
+  end
+
+  def route(conv, "GET", "/bengals") do
+    %{ conv | status: 200, body: "Bengal tigers..." }
+  end
+
+  def route(conv, "GET", "/bengals" <> id) do
+    %{ conv | status: 200, body: "Bengal tiger #{id}" }
+  end
+def route(conv, _method, path) do
+    %{ conv | status: 404, body: "No #{path} tigers" }
   end
 
   def format_response(conv) do
@@ -41,3 +56,43 @@ defmodule Tiger.Handler do
     }[code]
   end
 end
+
+request = """
+GET /siberians HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+response = Tiger.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /bengals HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+response = Tiger.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /bengals/1 HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+response = Tiger.Handler.handle(request)
+IO.puts response
+
+request = """
+GET /wolfs HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+
+"""
+response = Tiger.Handler.handle(request)
+IO.puts response
