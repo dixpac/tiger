@@ -39,6 +39,11 @@ defmodule Tiger.Handler do
     |> handle_file(conv)
   end
 
+  def route(%Conv{ method: "POST", path: "/tigers" } = conv) do
+    %{ conv | status: 201,
+              body: "Created a #{conv.params["type"]} tiger named: #{conv.params["name"]}" }
+  end
+
   def route(%Conv{ path: path } = conv) do
     %{ conv | status: 404, body: "No #{path} tigers" }
   end
@@ -100,6 +105,19 @@ Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
 
+"""
+response = Tiger.Handler.handle(request)
+IO.puts response
+
+request = """
+POST /tigers HTTP/1.1
+Host: example.com
+User-Agent: ExampleBrowser/1.0
+Accept: */*
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 21
+
+name=Mike&type=Siberian
 """
 response = Tiger.Handler.handle(request)
 IO.puts response

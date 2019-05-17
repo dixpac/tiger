@@ -1,5 +1,9 @@
 defmodule Tiger.Conv do
-  defstruct method: "", path: "", status: nil, body: ""
+  defstruct method: "",
+            path: "",
+            params: %{},
+            status: nil,
+            body: ""
 
   def full_status(conv) do
     "#{conv.status} #{status_reason(conv.status)}"
