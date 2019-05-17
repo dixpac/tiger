@@ -2,6 +2,7 @@ defmodule Tiger.Handler do
   def handle(request) do
     request
     |> parse
+    |> log
     |> route
     |> format_response
   end
@@ -15,6 +16,8 @@ defmodule Tiger.Handler do
 
     %{ method: method, path: path, status: nil, body: "" }
   end
+
+  def log(conv), do: IO.inspect conv
 
   def route(conv) do
     route(conv, conv.method, conv.path)
