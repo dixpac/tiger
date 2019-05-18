@@ -1,0 +1,7 @@
+<h3>Tigers</h3>
+
+<ul>
+  <%= Enum.map(tigers, fn(tiger) -> %>
+    <li><%= tiger.name %> - <%= tiger.type %></li>
+  <% end) %>
+</ul>
