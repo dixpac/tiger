@@ -21,6 +21,14 @@ defmodule Tiger.Parser do
     }
   end
 
+  @doc """
+  Parses a list of header fields into a map.
+
+  ## Example
+    iex> header_lines = ["A: 1", "B: 1"]
+    iex> Tiger.Parser.parse_headers(header_lines)
+    %{"A" => "1", "B" => "1"}
+  """
   def parse_headers(header_lines) do
     Enum.reduce(header_lines, %{}, fn(line, headers_so_far) ->
       [key, value] = String.split(line, ": ")
@@ -28,6 +36,17 @@ defmodule Tiger.Parser do
     end)
   end
 
+  @doc """
+  Parses param string in the form of `key1=value&key2=value` into a map with
+  corresponding key and values.
+
+  ## Examples
+    iex> params_string = "name=Rocky&type=Siberian"
+    iex> Tiger.Parser.parse_params("application/x-www-form-urlencoded", params_string)
+    %{"name" => "Rocky", "type" => "Siberian"}
+    iex> Tiger.Parser.parse_params("multipart/form-data", params_string)
+    %{}
+  """
   def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string
     |> String.trim
