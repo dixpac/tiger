@@ -3,6 +3,7 @@ defmodule Tiger.Handler do
   @moduledoc "Handles HTTP requests"
 
   alias Tiger.Conv
+  alias Tiger.TigersController
 
   @pages_path Path.expand("pages", File.cwd!)
 
@@ -20,16 +21,17 @@ defmodule Tiger.Handler do
     |> format_response
   end
 
-  def route(%Conv{ method: "GET", path: "/siberians" } = conv) do
-    %{ conv | status: 200, body: "Siberian tigers..." }
+  def route(%Conv{ method: "GET", path: "/tigers" } = conv) do
+    TigersController.index(conv)
   end
 
-  def route(%Conv{ method: "GET", path: "/bengals" } = conv) do
-    %{ conv | status: 200, body: "Bengal tigers..." }
+  def route(%Conv{ method: "GET", path: "/wolfs" } = conv) do
+    %{ conv | status: 200, body: "Wolfs..." }
   end
 
-  def route(%Conv{ method: "GET", path: "/bengals/" <> id } = conv) do
-    %{ conv | status: 200, body: "Bengal tiger #{id}" }
+  def route(%Conv{ method: "GET", path: "/tigers/" <> id } = conv) do
+    params = Map.put(conv.params, "id", id)
+    TigersController.show(conv, params)
   end
 
   def route(%Conv{ method: "GET", path: "/about" } = conv) do
@@ -39,13 +41,12 @@ defmodule Tiger.Handler do
     |> handle_file(conv)
   end
 
-  def route(%Conv{ method: "POST", path: "/tigers" } = conv) do
-    %{ conv | status: 201,
-              body: "Created a #{conv.params["type"]} tiger named: #{conv.params["name"]}" }
+  def route(%Conv{ method: "POST", path: "/animals" } = conv) do
+    TigersController.create(conv, conv.params)
   end
 
   def route(%Conv{ path: path } = conv) do
-    %{ conv | status: 404, body: "No #{path} tigers" }
+    %{ conv | status: 404, body: "No #{path} animals" }
   end
 
   def format_response(%Conv{} = conv) do
@@ -60,7 +61,7 @@ defmodule Tiger.Handler do
 end
 
 request = """
-GET /siberians HTTP/1.1
+GET /tigers HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
@@ -70,7 +71,7 @@ response = Tiger.Handler.handle(request)
 IO.puts response
 
 request = """
-GET /bengals HTTP/1.1
+GET /wolfs HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
@@ -80,7 +81,7 @@ response = Tiger.Handler.handle(request)
 IO.puts response
 
 request = """
-GET /bengals/1 HTTP/1.1
+GET /tigers/1 HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
@@ -110,14 +111,14 @@ response = Tiger.Handler.handle(request)
 IO.puts response
 
 request = """
-POST /tigers HTTP/1.1
+POST /animals HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 21
 
-name=Mike&type=Siberian
+name=Mike&type=Tiger
 """
 response = Tiger.Handler.handle(request)
 IO.puts response
