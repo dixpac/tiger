@@ -25,10 +25,6 @@ defmodule Tiger.Handler do
     TigersController.index(conv)
   end
 
-  def route(%Conv{ method: "GET", path: "/wolfs" } = conv) do
-    %{ conv | status: 200, body: "Wolfs..." }
-  end
-
   def route(%Conv{ method: "GET", path: "/tigers/" <> id } = conv) do
     params = Map.put(conv.params, "id", id)
     TigersController.show(conv, params)
@@ -71,27 +67,7 @@ response = Tiger.Handler.handle(request)
 IO.puts response
 
 request = """
-GET /wolfs HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-response = Tiger.Handler.handle(request)
-IO.puts response
-
-request = """
 GET /tigers/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-response = Tiger.Handler.handle(request)
-IO.puts response
-
-request = """
-GET /wolfs HTTP/1.1
 Host: example.com
 User-Agent: ExampleBrowser/1.0
 Accept: */*
@@ -118,7 +94,7 @@ Accept: */*
 Content-Type: application/x-www-form-urlencoded
 Content-Length: 21
 
-name=Mike&type=Tiger
+name=Mike&type=Bengal
 """
 response = Tiger.Handler.handle(request)
 IO.puts response
