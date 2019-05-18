@@ -1,0 +1,4 @@
+<h3>Tiger</h3>
+
+<p>ID: <%= tiger.id %></p>
+<p>Name: <%= tiger.name %></p>

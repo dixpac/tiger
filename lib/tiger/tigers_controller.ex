@@ -20,7 +20,13 @@ defmodule Tiger.TigersController do
 
   def show(conv, %{"id" => id}) do
     tiger = Animals.find_tiger(id)
-    %{ conv | status: 200, body: "<h3>Tiger id #{tiger.id} - name: #{tiger.name} </h3>" }
+
+    content =
+      @templates_path
+      |> Path.join("show.eex")
+      |> EEx.eval_file(tiger: tiger)
+
+    %{ conv | status: 200, body: content }
   end
 
   def create(conv, %{"name" => name, "type" => type} = params) do
