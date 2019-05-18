@@ -5,28 +5,25 @@ defmodule Tiger.TigersController do
 
   @templates_path Path.expand("templates", File.cwd!)
 
-  def index(conv) do
-    tigers =
-      Animals.list_tigers()
-      |> Enum.sort(&Tiger.sort_by_name/2)
-
+  defp render(conv, template, bindings \\ []) do
     content =
       @templates_path
-      |> Path.join("index.eex")
-      |> EEx.eval_file(tigers: tigers)
+      |> Path.join("#{template}.eex")
+      |> EEx.eval_file(bindings)
 
     %{ conv | status: 200, body: content }
+  end
+
+  def index(conv) do
+    tigers = Animals.list_tigers() |> Enum.sort(&Tiger.sort_by_name/2)
+
+    render(conv, "index", tigers: tigers)
   end
 
   def show(conv, %{"id" => id}) do
     tiger = Animals.find_tiger(id)
 
-    content =
-      @templates_path
-      |> Path.join("show.eex")
-      |> EEx.eval_file(tiger: tiger)
-
-    %{ conv | status: 200, body: content }
+    render(conv, "show", tiger: tiger)
   end
 
   def create(conv, %{"name" => name, "type" => type} = params) do
