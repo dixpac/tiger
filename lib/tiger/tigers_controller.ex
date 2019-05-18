@@ -1,12 +1,17 @@
 defmodule Tiger.TigersController do
 
   alias Tiger.Animals
+  alias Tiger.Tiger
+
+  def tiger_record(tiger) do
+    "<li>#{tiger.name} - #{tiger.type}</li>"
+  end
 
   def index(conv) do
     records =
       Animals.list_tigers
-      |> Enum.sort(fn(t1, t2) -> t1.name <= t2.name end)
-      |> Enum.map(fn(t) -> "<li>#{t.name} - #{t.type}</li>" end)
+      |> Enum.sort(&Tiger.sort_by_name/2)
+      |> Enum.map(&tiger_record/1)
       |> Enum.join
 
     %{ conv | status: 200, body: "<ul>#{records}</ul>" }

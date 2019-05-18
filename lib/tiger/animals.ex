@@ -14,6 +14,6 @@ defmodule Tiger.Animals do
   end
 
   def find_tiger(id) when is_binary(id) do
-    id |> String.to_integer(id) |> find_tiger
+    id |> String.to_integer |> find_tiger
   end
 end
