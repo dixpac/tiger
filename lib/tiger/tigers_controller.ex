@@ -1,18 +1,10 @@
 defmodule Tiger.TigersController do
 
+  import Tiger.View, only: [render: 3]
+
   alias Tiger.Animals
   alias Tiger.Tiger
 
-  @templates_path Path.expand("templates", File.cwd!)
-
-  defp render(conv, template, bindings \\ []) do
-    content =
-      @templates_path
-      |> Path.join("#{template}.eex")
-      |> EEx.eval_file(bindings)
-
-    %{ conv | status: 200, body: content }
-  end
 
   def index(conv) do
     tigers = Animals.list_tigers() |> Enum.sort(&Tiger.sort_by_name/2)
