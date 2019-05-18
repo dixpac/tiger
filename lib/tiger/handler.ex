@@ -42,59 +42,16 @@ defmodule Tiger.Handler do
   end
 
   def route(%Conv{ path: path } = conv) do
-    %{ conv | status: 404, body: "No #{path} animals" }
+    %{ conv | status: 404, body: "No #{path} here" }
   end
 
   def format_response(%Conv{} = conv) do
     """
-    HTTP/1.1 #{Conv.full_status(conv)}
-    Content-Type: text/html
-    Content-Lenght: #{String.length(conv.body)}
-
+    HTTP/1.1 #{Conv.full_status(conv)}\r
+    Content-Type: text/html\r
+    Content-Length: #{String.length(conv.body)}\r
+    \r
     #{conv.body}
     """
   end
 end
-
-request = """
-GET /tigers HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-response = Tiger.Handler.handle(request)
-IO.puts response
-
-request = """
-GET /tigers/1 HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-response = Tiger.Handler.handle(request)
-IO.puts response
-
-request = """
-GET /about HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-
-"""
-response = Tiger.Handler.handle(request)
-IO.puts response
-
-request = """
-POST /animals HTTP/1.1
-Host: example.com
-User-Agent: ExampleBrowser/1.0
-Accept: */*
-Content-Type: application/x-www-form-urlencoded
-Content-Length: 21
-
-name=Mike&type=Bengal
-"""
-response = Tiger.Handler.handle(request)
-IO.puts response
